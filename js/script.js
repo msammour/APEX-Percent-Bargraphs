@@ -1,8 +1,29 @@
 var apexSkillBar = (function () {
     "use strict";
-    var scriptVersion = "1.0";
+    var scriptVersion = "1.0.1";
     var util = {
-        version: "1.0.1",
+        version: "1.0.5",
+        isAPEX: function () {
+            if (typeof (apex) !== 'undefined') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        debug: {
+            info: function (str) {
+                if (util.isAPEX()) {
+                    apex.debug.info(str);
+                }
+            },
+            error: function (str) {
+                if (util.isAPEX()) {
+                    apex.debug.error(str);
+                } else {
+                    console.error(str);
+                }
+            }
+        },
         escapeHTML: function (str) {
             if (str === null) {
                 return null;
@@ -17,9 +38,9 @@ var apexSkillBar = (function () {
                     /*do nothing */
                 }
             }
-            try {
+            if (util.isAPEX()) {
                 return apex.util.escapeHTML(String(str));
-            } catch (e) {
+            } else {
                 str = String(str);
                 return str
                     .replace(/&/g, "&amp;")
@@ -32,27 +53,23 @@ var apexSkillBar = (function () {
         },
         loader: {
             start: function (id) {
-
-                try {
+                if (util.isAPEX()) {
                     apex.util.showSpinner($(id));
-                } catch (e) {
+                } else {
                     /* define loader */
                     var faLoader = $("<span></span>");
                     faLoader.attr("id", "loader" + id);
-                    faLoader.addClass("ct-loader fa-stack fa-3x");
-
-                    /* define circle for loader */
-                    var faCircle = $("<i></i>");
-                    faCircle.addClass("fa fa-circle fa-stack-2x");
-                    faCircle.css("color", "rgba(121,121,121,0.6)");
+                    faLoader.addClass("ct-loader");
 
                     /* define refresh icon with animation */
                     var faRefresh = $("<i></i>");
-                    faRefresh.addClass("fa fa-refresh fa-spin fa-inverse fa-stack-1x");
-                    faRefresh.css("animation-duration", "1.8s");
+                    faRefresh.addClass("fa fa-refresh fa-2x fa-anim-spin");
+                    faRefresh.css("background", "rgba(121,121,121,0.6)");
+                    faRefresh.css("border-radius", "100%");
+                    faRefresh.css("padding", "15px");
+                    faRefresh.css("color", "white");
 
                     /* append loader */
-                    faLoader.append(faCircle);
                     faLoader.append(faRefresh);
                     $(id).append(faLoader);
                 }
